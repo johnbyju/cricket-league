@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html{
+    background-color: black;
+}
+
+.css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input{
+    color: white !important;
+}
