@@ -58,8 +58,9 @@ export default function PlayerDetails() {
     emergencyContact: Yup.string().required("Emergency contact number is required").matches(/^\d{10}$/, "Emergency contact number must be 10 digits"),
   })
   // Handle input change
-  const handleChange = (e) => {
-    const { id, value } = e.target;
+  const handleChange = (file) => {
+    
+    const { id, value } = file.target;
     setFormData({ ...formData, [id]: value });
     
   };
@@ -67,22 +68,15 @@ export default function PlayerDetails() {
   
 
   
-  const handleFileChange = (e) => {
-   
-    const file = e.target.files[0];
+  const handleFileChange = (file) => {
     const reader = new FileReader();
-
-   
     reader.onloadend = () => {
       setFormData(prevData => ({
         ...prevData,
-        photo: reader.result 
+        photo: reader.result // Save Base64 string to formData
       }));
     };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    reader.readAsDataURL(file); // Convert image to Base64
   };
 
   

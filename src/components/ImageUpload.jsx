@@ -6,7 +6,7 @@ export function ImageUpload({ onChange }) {
   const [preview, setPreview] = useState(null);
 
   const onDrop = useCallback(
-    (acceptedFiles) => {
+    (acceptedFiles = []) => {
       const file = acceptedFiles[0];
       if (file) {
         const imageUrl = URL.createObjectURL(file);
@@ -18,6 +18,7 @@ export function ImageUpload({ onChange }) {
     },
     [onChange]
   );
+  
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
