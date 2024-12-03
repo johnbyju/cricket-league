@@ -26,6 +26,8 @@ export default function PreviewPage() {
 const GoBack=()=>{
     navigate('/');
 }
+
+
   return (
     <div className="min-h-screen bg-white text-black">
       <div className="max-w-[210mm] mx-auto p-8 border border-gray-300 shadow-lg">

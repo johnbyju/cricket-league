@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { Calendar, ChevronDownIcon, Mail, Phone, User } from "lucide-react"; // Importing the calendar icon
 import { ImageUpload } from "./ImageUpload";
 import { useNavigate } from "react-router-dom";
+import * as Yup from 'yup' ;
+import { string } from "yup";
 
 export default function PlayerDetails() {
  
 
 
   const navigate = useNavigate();
-  const [error,setError]=useState({
-    fullName:''
-  });
+ 
   const getData = localStorage.getItem("formData")
   const getParseDate=JSON.parse(getData);
   console.log(getParseDate,'getParseDate');
+  
   const [formData, setFormData] = useState({
     fullName: getParseDate?.fullName,
     dob: getParseDate?.dob,
@@ -30,33 +31,52 @@ export default function PlayerDetails() {
     favoriteCricketer:getParseDate?.favoriteCricketer,
   });
   console.log(formData,'formData');
+ 
 
+  const [error,setError]=useState({});
+  const validationSchema = Yup.object({
+    fullName :string().required("full name is Required"),
+    dob :string().required("date of birth is Required"),
+    contact:string().required("Phone number is Required").matches(/^\d{10}$/,"phone number must be 10 digit"),
+    email:string().email("invalid email format").required("email is required"),
+    photo: Yup.mixed()
+    .required("Photo is required")
+    .test("fileType", "Only JPG, PNG, and JPEG files are allowed", (value) => {
+      return value && ["image/jpeg", "image/png", "image/jpg"].includes(value.type);
+    })
+    .test("fileSize", "File size must be less than 5MB", (value) => {
+      return value && value.size <= 5 * 1024 * 1024; // 5MB
+    }),
+    preferredRole: Yup.string().required("Preferred role is required"),
+    bowlingType: Yup.string().required("Bowling type is required"),
+    jerseySize: Yup.string().required("Jersey size is required"),
+    medicalConditionDetails: Yup.string().when('please select an option', {
+      is: 'Yes',
+      then: Yup.string().required("Please specify your medical condition")
+    }),
+    emergencyContactName: Yup.string().required("Emergency contact name is required"),
+    emergencyContact: Yup.string().required("Emergency contact number is required").matches(/^\d{10}$/, "Emergency contact number must be 10 digits"),
+  })
   // Handle input change
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
     
   };
-  // useEffect(() => {
-  //   if (!formData){
-  //   setFormData(getParseDate)
-  //   }
-  
-    
-  // }, [])
+ 
   
 
-  // Handle file upload and set the photo in formData
+  
   const handleFileChange = (e) => {
-    // setFormData({ ...formData, photo: file });
+   
     const file = e.target.files[0];
     const reader = new FileReader();
 
-    // Convert file to base64 data URL and store it in formData
+   
     reader.onloadend = () => {
       setFormData(prevData => ({
         ...prevData,
-        photo: reader.result // Save the data URL here
+        photo: reader.result 
       }));
     };
 
@@ -73,17 +93,36 @@ export default function PlayerDetails() {
     }
   };
 
-  const handleFormSubmit=()=>{
-    console.log("Running")
-    if(!formData?.fullName){
-    setError({ ...error, fullName: "Full Name is required" });
-    }
-    else{
-      setError({ ...error, fullName: "" }); 
-      localStorage.setItem('formData', JSON.stringify(formData));
-      navigate('/preview', { state: formData });
+  const handleFormSubmit=async()=>{
 
+    try{
+      await validationSchema.validate(formData,{abortEarly:false});
+
+      localStorage.setItem('formData', JSON.stringify(formData));
+
+      navigate('/preview');
+    
     }
+    catch (err) {
+      const newErrors = err.inner.reduce((acc, currentErr) => {
+        acc[currentErr.path] = currentErr.message;
+        return acc;
+      }, {});
+      setError(newErrors);
+    }
+   
+
+
+    // console.log("Running")
+    // if(!formData?.fullName){
+    // setError({ ...error, fullName: "Full Name is required" });
+    // }
+    // else{
+    //   setError({ ...error, fullName: "" }); 
+    //   localStorage.setItem('formData', JSON.stringify(formData));
+    //   navigate('/preview', { state: formData });
+
+    // }
   }
   return (
     <div className="min-h-screen bg-black text-white">
@@ -136,6 +175,7 @@ export default function PlayerDetails() {
                   onChange={handleChange}
                   className="w-full p-2 bg-black border border-gray-800 text-white rounded"
                 />
+                {error?.dob &&<p className="text-red">{error?.dob}</p>}
                 <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
             </div>
@@ -152,6 +192,10 @@ export default function PlayerDetails() {
                 onChange={handleChange}
                 className="w-full p-2 bg-black border border-gray-800 text-white rounded"
               />
+              {formData.contact && !/^\d{10}$/.test(formData.contact) && (
+                  <p className="text-red-500 text-xs mt-1">Please enter a valid 10-digit phone number.</p>
+                )}
+              {error?.contact &&<p className="text-red">{error?.contact}</p>}
               <Phone className="absolute right-3 top-8 h-5 w-5 text-gray-400" />
             </div>
 
@@ -167,12 +211,14 @@ export default function PlayerDetails() {
                 onChange={handleChange}
                 className="w-full p-2 bg-black border border-gray-800 text-white rounded"
               />
+              {error?.email&&<p className="text-red">{error?.email}</p>}
               <Mail className="absolute right-3 top-8 h-5 w-5 text-gray-400" />
             </div>
 
             <div className="space-y-2">
               <label>Attach Recent Photo</label>
               <ImageUpload onChange={handleFileChange} />
+              {error?.photo&&<p className="text-red">{error?.photo}</p>}
             </div>
 
             <div className="relative space-y-2">
@@ -193,6 +239,7 @@ export default function PlayerDetails() {
                   <option value="Wicket Keeper">Wicket Keeper</option>
                   <option value="All Rounder">All Rounder</option>
                 </select>
+                {error?.preferredRole&&<p className="text-red">{error?.preferredRole}</p>}
                 <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
               </div>
 
@@ -216,6 +263,7 @@ export default function PlayerDetails() {
                   <option value="Off Spin">Off Spin</option>
                   <option value="Leg Spin">Leg Spin</option>
                 </select>
+                {error?.bowlingType&&<p className="text-red">{error?.bowlingType}</p>}
                 <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
               </div>
             </div>
@@ -242,6 +290,7 @@ export default function PlayerDetails() {
                   <option value="XL" />
                   <option value="XXL" />
                 </datalist>
+                {error?.jerseySize&&<p className="text-red">{error?.jerseySize}</p>}
               </div>
             </div>
 
@@ -278,6 +327,8 @@ export default function PlayerDetails() {
                 </label>
               </div>
 
+              {error?.medicalCondition&&<p className="text-red">{error?.medicalCondition}</p>}
+
               {/* Conditionally render input field if "Yes" is selected */}
               {formData.medicalCondition === "Yes" && (
                 <div className="mt-2">
@@ -293,6 +344,7 @@ export default function PlayerDetails() {
                     className="w-full p-2 bg-black border border-gray-800 text-white rounded"
                     placeholder="Enter your medical condition"
                   />
+                   {error?.medicalConditionDetails && <p className="text-red-500">{error?.medicalConditionDetails}</p>}
                 </div>
               )}
             </div>
@@ -336,6 +388,7 @@ export default function PlayerDetails() {
                 {formData.emergencyContact && !/^\d{10}$/.test(formData.emergencyContact) && (
                   <p className="text-red-500 text-xs mt-1">Please enter a valid 10-digit phone number.</p>
                 )}
+                 {error?.emergencyContact && <p className="text-red-500">{error?.emergencyContact}</p>}
               </div>
             </div>
 
@@ -354,6 +407,7 @@ export default function PlayerDetails() {
                   className="w-full bg-black  text-white"
                   placeholder="Enter your favorite cricketer"
                 />
+
               </div>
             </div>
 
