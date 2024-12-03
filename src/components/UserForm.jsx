@@ -2,51 +2,50 @@ import { useEffect, useState } from "react";
 import { Calendar, ChevronDownIcon, Mail, Phone, User } from "lucide-react"; // Importing the calendar icon
 import { ImageUpload } from "./ImageUpload";
 import { useNavigate } from "react-router-dom";
-import * as Yup from 'yup' ;
+import * as Yup from 'yup';
 import { string } from "yup";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from "dayjs";
 
 export default function PlayerDetails() {
- 
+
 
 
   const navigate = useNavigate();
- 
+
   const getData = localStorage.getItem("formData")
-  const getParseDate=JSON.parse(getData);
-  console.log(getParseDate,'getParseDate');
-  
+  const getParseDate = JSON.parse(getData);
+  console.log(getParseDate, 'getParseDate');
+
   const [formData, setFormData] = useState({
     fullName: getParseDate?.fullName,
-    dob: getParseDate?.dob,
-    contact:getParseDate?.contact,
+    dob: getParseDate?.dob ? dayjs(getParseDate.dob) : null,
+    contact: getParseDate?.contact,
     email: getParseDate?.email,
     photo: getParseDate?.photo,
     preferredRole: getParseDate?.preferredRole,
-    bowlingType:getParseDate?.bowlingType,
+    bowlingType: getParseDate?.bowlingType,
     jerseySize: getParseDate?.jerseySize,
-    medicalCondition:getParseDate?.medicalCondition,
+    medicalCondition: getParseDate?.medicalCondition,
     medicalConditionDetails: getParseDate?.medicalConditionDetails,
     emergencyContactName: getParseDate?.emergencyContactName,
     emergencyContact: getParseDate?.emergencyContact,
-    favoriteCricketer:getParseDate?.favoriteCricketer,
+    favoriteCricketer: getParseDate?.favoriteCricketer,
   });
-  console.log(formData,'formData');
- 
+  console.log(formData, 'formData');
 
-  const [error,setError]=useState({});
+
+  const [error, setError] = useState({});
   const validationSchema = Yup.object({
-    fullName :string().required("full name is Required"),
-    dob :string().required("date of birth is Required"),
-    contact:string().required("Phone number is Required").matches(/^\d{10}$/,"phone number must be 10 digit"),
-    email:string().email("invalid email format").required("email is required"),
+    fullName: string().required("full name is Required"),
+    dob: string().required("date of birth is Required"),
+    contact: string().required("Phone number is Required").matches(/^\d{10}$/, "phone number must be 10 digit"),
+    email: string().email("invalid email format").required("email is required"),
     photo: Yup.mixed()
-    .required("Photo is required")
-    .test("fileType", "Only JPG, PNG, and JPEG files are allowed", (value) => {
-      return value && ["image/jpeg", "image/png", "image/jpg"].includes(value.type);
-    })
-    .test("fileSize", "File size must be less than 5MB", (value) => {
-      return value && value.size <= 5 * 1024 * 1024; // 5MB
-    }),
+      .required("Photo is required")
+      ,
+
     preferredRole: Yup.string().required("Preferred role is required"),
     bowlingType: Yup.string().required("Bowling type is required"),
     jerseySize: Yup.string().required("Jersey size is required"),
@@ -59,15 +58,15 @@ export default function PlayerDetails() {
   })
   // Handle input change
   const handleChange = (file) => {
-    
+
     const { id, value } = file.target;
     setFormData({ ...formData, [id]: value });
-    
-  };
- 
-  
 
-  
+  };
+
+
+
+
   const handleFileChange = (file) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -79,45 +78,39 @@ export default function PlayerDetails() {
     reader.readAsDataURL(file); // Convert image to Base64
   };
 
-  
 
-  const handlePreview = () => {
-    if (true) {
-      console.log(formData); 
-    }
+
+  // const handlePreview = () => {
+  //   if (true) {
+  //     console.log(formData); 
+  //   }
+  // };
+
+
+  const handleDateChange = (date) => {
+    setFormData({ ...formData, dob: date });
   };
 
-  const handleFormSubmit=async()=>{
+  const handleFormSubmit = async () => {
+    try {
+      await validationSchema.validate(formData, { abortEarly: false });
 
-    try{
-      await validationSchema.validate(formData,{abortEarly:false});
-
-      localStorage.setItem('formData', JSON.stringify(formData));
+      // Store formData in localStorage (convert dob to ISO string)
+      localStorage.setItem('formData', JSON.stringify({
+        ...formData,
+        dob: formData.dob ? formData.dob.toISOString() : null,  // Save as ISO string
+      }));
 
       navigate('/preview');
-    
-    }
-    catch (err) {
+    } catch (err) {
+      console.error("Validation Error:", err);
       const newErrors = err.inner.reduce((acc, currentErr) => {
         acc[currentErr.path] = currentErr.message;
         return acc;
       }, {});
       setError(newErrors);
     }
-   
-
-
-    // console.log("Running")
-    // if(!formData?.fullName){
-    // setError({ ...error, fullName: "Full Name is required" });
-    // }
-    // else{
-    //   setError({ ...error, fullName: "" }); 
-    //   localStorage.setItem('formData', JSON.stringify(formData));
-    //   navigate('/preview', { state: formData });
-
-    // }
-  }
+  };
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Fixed header image */}
@@ -130,7 +123,7 @@ export default function PlayerDetails() {
           />
         </div>
         <div className="p-2 bg-black">
-        <h1 className="text-xl text-center font-semibold">Player Details</h1>
+          <h1 className="text-xl text-center font-semibold">Player Details</h1>
         </div>
       </div>
 
@@ -147,15 +140,15 @@ export default function PlayerDetails() {
                 type="text"
                 value={formData.fullName}
 
-                
+
                 onChange={handleChange}
                 className="w-full p-2 bg-black border border-gray-800 text-white rounded"
               />
-              {error?.fullName &&<p className="text-red">{error?.fullName}</p>}
+              {error?.fullName && <p className="text-red">{error?.fullName}</p>}
               <User className="absolute right-3 top-8  text-gray-400 h-5 w-5" />
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <label htmlFor="dob" className="block text-sm font-medium">
                 Date of Birth
               </label>
@@ -172,6 +165,25 @@ export default function PlayerDetails() {
                 {error?.dob &&<p className="text-red">{error?.dob}</p>}
                 <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
+            </div> */}
+
+
+            <div className="space-y-2">
+              <label htmlFor="dob" className="block text-sm font-medium">
+                Date of Birth
+              </label>
+              <div className="relative border border-gray-800 rounded-lg">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+          id="dob"
+          value={formData.dob}
+          onChange={handleDateChange}
+          renderInput={(props) => <TextField {...props} fullWidth />}
+        />
+                </LocalizationProvider>
+                {error?.dob && <p className="text-red">{error?.dob}</p>}
+                <Calendar className="absolute right-3 top-4 h-5 w-5 text-gray-400" />
+              </div>
             </div>
 
             <div className="relative space-y-2">
@@ -187,9 +199,9 @@ export default function PlayerDetails() {
                 className="w-full p-2 bg-black border border-gray-800 text-white rounded"
               />
               {formData.contact && !/^\d{10}$/.test(formData.contact) && (
-                  <p className="text-red-500 text-xs mt-1">Please enter a valid 10-digit phone number.</p>
-                )}
-              {error?.contact &&<p className="text-red">{error?.contact}</p>}
+                <p className="text-red-500 text-xs mt-1">Please enter a valid 10-digit phone number.</p>
+              )}
+              {error?.contact && <p className="text-red">{error?.contact}</p>}
               <Phone className="absolute right-3 top-8 h-5 w-5 text-gray-400" />
             </div>
 
@@ -205,14 +217,14 @@ export default function PlayerDetails() {
                 onChange={handleChange}
                 className="w-full p-2 bg-black border border-gray-800 text-white rounded"
               />
-              {error?.email&&<p className="text-red">{error?.email}</p>}
+              {error?.email && <p className="text-red">{error?.email}</p>}
               <Mail className="absolute right-3 top-8 h-5 w-5 text-gray-400" />
             </div>
 
             <div className="space-y-2">
               <label>Attach Recent Photo</label>
               <ImageUpload onChange={handleFileChange} />
-              {error?.photo&&<p className="text-red">{error?.photo}</p>}
+              {error?.photo && <p className="text-red">{error?.photo}</p>}
             </div>
 
             <div className="relative space-y-2">
@@ -233,7 +245,7 @@ export default function PlayerDetails() {
                   <option value="Wicket Keeper">Wicket Keeper</option>
                   <option value="All Rounder">All Rounder</option>
                 </select>
-                {error?.preferredRole&&<p className="text-red">{error?.preferredRole}</p>}
+                {error?.preferredRole && <p className="text-red">{error?.preferredRole}</p>}
                 <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
               </div>
 
@@ -257,7 +269,7 @@ export default function PlayerDetails() {
                   <option value="Off Spin">Off Spin</option>
                   <option value="Leg Spin">Leg Spin</option>
                 </select>
-                {error?.bowlingType&&<p className="text-red">{error?.bowlingType}</p>}
+                {error?.bowlingType && <p className="text-red">{error?.bowlingType}</p>}
                 <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
               </div>
             </div>
@@ -268,7 +280,7 @@ export default function PlayerDetails() {
               </label>
               <div className="relative">
                 <input
-                 required
+                  required
                   id="jerseySize"
                   type="text"
                   value={formData.jerseySize}
@@ -284,7 +296,7 @@ export default function PlayerDetails() {
                   <option value="XL" />
                   <option value="XXL" />
                 </datalist>
-                {error?.jerseySize&&<p className="text-red">{error?.jerseySize}</p>}
+                {error?.jerseySize && <p className="text-red">{error?.jerseySize}</p>}
               </div>
             </div>
 
@@ -321,7 +333,7 @@ export default function PlayerDetails() {
                 </label>
               </div>
 
-              {error?.medicalCondition&&<p className="text-red">{error?.medicalCondition}</p>}
+              {error?.medicalCondition && <p className="text-red">{error?.medicalCondition}</p>}
 
               {/* Conditionally render input field if "Yes" is selected */}
               {formData.medicalCondition === "Yes" && (
@@ -338,7 +350,7 @@ export default function PlayerDetails() {
                     className="w-full p-2 bg-black border border-gray-800 text-white rounded"
                     placeholder="Enter your medical condition"
                   />
-                   {error?.medicalConditionDetails && <p className="text-red-500">{error?.medicalConditionDetails}</p>}
+                  {error?.medicalConditionDetails && <p className="text-red-500">{error?.medicalConditionDetails}</p>}
                 </div>
               )}
             </div>
@@ -353,7 +365,7 @@ export default function PlayerDetails() {
                   required
                   type="text"
                   value={formData.emergencyContactName}
-                  onChange={handleChange}               
+                  onChange={handleChange}
                   className="w-full bg-black text-white border-0 outline-none"
                   placeholder="Enter emergency contact name"
                 />
@@ -374,7 +386,7 @@ export default function PlayerDetails() {
                   className="w-full p-2 bg-black border border-gray-800 text-white rounded"
                   placeholder="Enter emergency contact number"
                   pattern="[0-9]{10}"
-                  inputMode="numeric" 
+                  inputMode="numeric"
                   maxLength="10"
                   required
                 />
@@ -382,7 +394,7 @@ export default function PlayerDetails() {
                 {formData.emergencyContact && !/^\d{10}$/.test(formData.emergencyContact) && (
                   <p className="text-red-500 text-xs mt-1">Please enter a valid 10-digit phone number.</p>
                 )}
-                 {error?.emergencyContact && <p className="text-red-500">{error?.emergencyContact}</p>}
+                {error?.emergencyContact && <p className="text-red-500">{error?.emergencyContact}</p>}
               </div>
             </div>
 

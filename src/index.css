@@ -8,4 +8,7 @@ html{
 
 .css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input{
     color: white !important;
+    width: max-content;
+    margin: 0px !important;
+    border: 0.5px solid #ffff;
 }

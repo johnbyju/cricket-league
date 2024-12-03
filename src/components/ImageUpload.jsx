@@ -1,24 +1,36 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 
 export function ImageUpload({ onChange }) {
   const [preview, setPreview] = useState(null);
 
+  // Load the image from localStorage when the component mounts
+  useEffect(() => {
+    const storedImage = localStorage.getItem("uploadedImage");
+    if (storedImage) {
+      setPreview(storedImage); // Set the preview to the stored image
+    }
+  }, []);
+
   const onDrop = useCallback(
     (acceptedFiles = []) => {
       const file = acceptedFiles[0];
       if (file) {
-        const imageUrl = URL.createObjectURL(file);
-        setPreview(imageUrl);
-        if (onChange) {
-          onChange(file);
-        }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64Image = reader.result;
+          setPreview(base64Image); // Update the preview
+          localStorage.setItem("uploadedImage", base64Image); // Store the image in localStorage
+          if (onChange) {
+            onChange(file); // Call the onChange handler with the file
+          }
+        };
+        reader.readAsDataURL(file); // Convert the image to a Base64 string
       }
     },
     [onChange]
   );
-  
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -38,7 +50,7 @@ export function ImageUpload({ onChange }) {
         <div className="relative aspect-[3/2] w-full">
           <img
             src={preview}
-            alt="Preview"
+            alt="Uploaded Preview"
             className="object-cover w-full h-full"
           />
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
