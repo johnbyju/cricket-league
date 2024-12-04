@@ -202,14 +202,14 @@ export default function PreviewPage() {
           </div>
           <div className="flex gap-5 justify-center">
             <button
-              className="p-3 rounded-lg bg-red-600 hover:bg-red-700 text-white rounded"
+              className="p-3 rounded-lg bg-red-600 hover:bg-red-700 text-white"
               onClick={() => window.history.back()}
             >
               Go Back
             </button>
 
             <button
-              className={`p-2 rounded-lg text-white rounded ${isAgreed ? 'bg-lightgreen hover:bg-green-500' : 'bg-blue-600 hover:bg-blue-700'}`}
+              className={`p-2  rounded-lg text-white  ${isAgreed ? 'bg-lightgreen hover:bg-green-500' : 'bg-blue-600 hover:bg-blue-700'}`}
               onClick={handleSubmit} 
               disabled={!setIsAgreed}   
             >
