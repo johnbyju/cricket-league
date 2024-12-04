@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jsPDF from 'jspdf'; // To generate PDF
 
@@ -28,15 +28,54 @@ export default function PreviewPage() {
   const handleAgreeChange = (e) => {
     setIsAgreed(e.target.checked);
   };
+  const location = useLocation();
+  const file = location.state?.file;
+
+  // useEffect(() => {
+  //   if (file) {
+  //     sendFileToBackend(file); // Send the file to the backend
+  //   }
+  // }, [file]);
 
   // Submit the data and generate PDF
   const handleSubmit = async () => {
     if (isSubmitted) return; // Prevent multiple submissions
     setIsSubmitted(true);
+   const Photo = localStorage.getItem('Photo')
 
     try {
       // Post data to the API
-      await axios.post('YOUR_API_URL', formData);
+      const formDatas = new FormData();
+  
+      // Append form fields
+      formDatas.append('fullName', formData?.fullName)
+      formDatas.append('dateOfBirth', formData?.dob)
+      formDatas.append('contactNumber', formData?.contact)
+      formDatas.append('email', formData?.email);
+      formDatas.append('preferredRole', formData?.preferredRole);
+       formDatas.append('playerInformation', 'd');
+       formDatas.append('bowlingType', formData?.bowlingType);
+       formDatas.append('specialSkills', 'd');
+       formDatas.append('jerseySize', formData?.jerseySize);
+       formDatas.append('medicalConditions',formData?.medicalCondition=="Yes"? formData?.medicalConditionDetails:formData?.medicalCondition);
+       formDatas.append('emergencyContactName', formData?.emergencyContactName);
+       formDatas.append('favoriteCricketer', formData?.favoriteCricketer);
+       formDatas.append('acknowledgement', "Yes");
+       
+       formDatas.append('emergencyContactInfo', formData?.emergencyContact);
+
+       formDatas.append('date', '12-10-2024');
+       if (formData?.photo) {
+        formDatas.append('photo',file);
+      }
+   
+
+
+      await axios.post('https://marmaregisterformbe.onrender.com/users', formDatas,{
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       // Generate PDF
       const doc = new jsPDF();

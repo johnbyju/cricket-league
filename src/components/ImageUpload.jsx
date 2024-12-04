@@ -2,8 +2,11 @@ import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 
-export function ImageUpload({ onChange }) {
+export function ImageUpload({ onChange,file,setFile }) {
   const [preview, setPreview] = useState(null);
+
+  // Load the image from localStorage when the component mounts
+ // File to send to backend
 
   // Load the image from localStorage when the component mounts
   useEffect(() => {
@@ -13,24 +16,23 @@ export function ImageUpload({ onChange }) {
     }
   }, []);
 
-  const onDrop = useCallback(
-    (acceptedFiles = []) => {
-      const file = acceptedFiles[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64Image = reader.result;
-          setPreview(base64Image); // Update the preview
-          localStorage.setItem("uploadedImage", base64Image); // Store the image in localStorage
-          if (onChange) {
-            onChange(file); // Call the onChange handler with the file
-          }
-        };
-        reader.readAsDataURL(file); // Convert the image to a Base64 string
-      }
-    },
-    [onChange]
-  );
+  // Handle file drop
+  const onDrop = useCallback((acceptedFiles = []) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Image = reader.result;
+        setPreview(base64Image); // Update the preview
+        localStorage.setItem("uploadedImage", base64Image); // Store the image in localStorage
+        setFile(file); // Store the file for backend submission
+        if (onChange) {
+          onChange(file); // Call onChange handler with the file
+        }
+      };
+      reader.readAsDataURL(file); // Convert the image to a Base64 string for preview
+    }
+  }, [onChange]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -39,6 +41,7 @@ export function ImageUpload({ onChange }) {
     },
     maxFiles: 1,
   });
+
 
   return (
     <div

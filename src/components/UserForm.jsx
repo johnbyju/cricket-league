@@ -13,11 +13,11 @@ export default function PlayerDetails() {
 
 
   const navigate = useNavigate();
-
+  const [file, setFile] = useState(null);
   const getData = localStorage.getItem("formData")
   const getParseDate = JSON.parse(getData);
   console.log(getParseDate, 'getParseDate');
-
+const [photo,setPhoto]=useState(null)
   const [formData, setFormData] = useState({
     fullName: getParseDate?.fullName,
     dob: getParseDate?.dob ? dayjs(getParseDate.dob) : null,
@@ -68,6 +68,10 @@ export default function PlayerDetails() {
 
 
   const handleFileChange = (file) => {
+    // setPhoto(file.target.files[0])
+    // localStorage.setItem('Photo',photo)
+    console.log();
+    
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData(prevData => ({
@@ -100,8 +104,7 @@ export default function PlayerDetails() {
         ...formData,
         dob: formData.dob ? formData.dob.toISOString() : null,  // Save as ISO string
       }));
-
-      navigate('/preview');
+      navigate('/preview', { state: { file } });
     } catch (err) {
       console.error("Validation Error:", err);
       const newErrors = err.inner.reduce((acc, currentErr) => {
@@ -223,7 +226,7 @@ export default function PlayerDetails() {
 
             <div className="space-y-2">
               <label>Attach Recent Photo</label>
-              <ImageUpload onChange={handleFileChange} />
+              <ImageUpload onChange={handleFileChange} file={file} setFile={setFile} />
               {error?.photo && <p className="text-red">{error?.photo}</p>}
             </div>
 
