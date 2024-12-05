@@ -98,6 +98,10 @@ export default function PreviewPage() {
         img.onload = () => {
           doc.addImage(img, 'JPEG', 150, 30, 50, 50);
           doc.save('player-details.pdf'); // Download the PDF
+
+          localStorage.clear();
+
+          navigate('/loading')
         };
       } else {
         doc.save('player-details.pdf'); // Download the PDF
@@ -199,7 +203,11 @@ export default function PreviewPage() {
               <input type="checkbox" checked={isAgreed} onChange={handleAgreeChange} />
               <span className="ml-2">I agree to the terms and conditions</span>
             </label>
+            {handleAgreeChange && !isAgreed && (
+            <p className="text-red-600 text-sm mt-2">Please select the "I agree to the terms and conditions" checkbox.</p>
+          )}
           </div>
+         
           <div className="flex gap-5 justify-center">
             <button
               className="p-3 rounded-lg bg-red-600 hover:bg-red-700 text-white"
@@ -209,9 +217,9 @@ export default function PreviewPage() {
             </button>
 
             <button
-              className={`p-2  rounded-lg text-white  ${isAgreed ? 'bg-lightgreen hover:bg-green-500' : 'bg-blue-600 hover:bg-blue-700'}`}
+              className={`p-2 rounded-lg text-white  ${isAgreed ? 'bg-green-500' : 'bg-red-400'}`}
               onClick={handleSubmit} 
-              disabled={!setIsAgreed}   
+              disabled={!isAgreed}   
             >
               Submit & Download PDF
             </button>

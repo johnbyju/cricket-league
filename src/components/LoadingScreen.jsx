@@ -1,21 +1,27 @@
-import { useEffect, useState } from 'react'
-import loader from '/loader.png'
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import loader from '/loader.png';
+
 export default function LoadingScreen() {
-  const [progress, setProgress] = useState(0)
+  const [progress, setProgress] = useState(0);
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress((prevProgress) => {
         if (prevProgress >= 100) {
-          clearInterval(timer)
-          return 100
+          clearInterval(timer);
+          setTimeout(() => {
+            navigate('/'); // Redirect to home page after the interval
+          }, 500); // Optional delay before routing (500ms in this case)
+          return 100;
         }
-        return prevProgress + 1
-      })
-    }, 30)
+        return prevProgress + 1;
+      });
+    }, 30);
 
-    return () => clearInterval(timer)
-  }, [])
+    return () => clearInterval(timer); // Cleanup interval on component unmount
+  }, [navigate]); // Added navigate as a dependency
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#5e2025] to-black flex flex-col items-center justify-center p-4">
@@ -29,8 +35,7 @@ export default function LoadingScreen() {
             className="mx-auto opacity-55"
             priority
           />
-        </div>
-        
+        </div>        
         <div className="space-y-4 w-full">
           <div className="h-1  bg-gray-800 rounded-full overflow-hidden">
             <div 
@@ -40,13 +45,11 @@ export default function LoadingScreen() {
           </div>
           
           <div className=" text-center gap-5 text-white/80 text-sm">
-            <span>Loading..</span>
-            {/* <span>Loading. {'.'.repeat((progress % 2) + 1)}</span> */}
+            <span>Loading...</span>
             <span>{progress}%</span>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
