@@ -1,12 +1,11 @@
 import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
+import { usePhoto } from "./PhotoContext"; // Import the usePhoto hook
 
-export function ImageUpload({ onChange,file,setFile }) {
+export function ImageUpload({ onChange, file, setFile }) {
   const [preview, setPreview] = useState(null);
-
-  // Load the image from localStorage when the component mounts
- // File to send to backend
+  const { setPhoto } = usePhoto(); // Access the setPhoto function from the context
 
   // Load the image from localStorage when the component mounts
   useEffect(() => {
@@ -26,13 +25,17 @@ export function ImageUpload({ onChange,file,setFile }) {
         setPreview(base64Image); // Update the preview
         localStorage.setItem("uploadedImage", base64Image); // Store the image in localStorage
         setFile(file); // Store the file for backend submission
+
+        // Update the photo in the context
+        setPhoto(base64Image); // Update the global state with the new photo
+
         if (onChange) {
           onChange(file); // Call onChange handler with the file
         }
       };
       reader.readAsDataURL(file); // Convert the image to a Base64 string for preview
     }
-  }, [onChange]);
+  }, [onChange, setFile, setPhoto]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -41,7 +44,6 @@ export function ImageUpload({ onChange,file,setFile }) {
     },
     maxFiles: 1,
   });
-
 
   return (
     <div

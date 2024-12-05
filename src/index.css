@@ -12,3 +12,15 @@ html{
     margin: 0px !important;
     border: 0.5px solid #ffff;
 }
+
+
+
+.css-jupps9-MuiInputBase-root-MuiOutlinedInput-root{
+    width: 91vw !important;
+    cursor: pointer !important;
+    border: 1px solid rgba(75, 75, 75, 0.779) !important;
+}
+
+.css-oeq6yz-MuiButtonBase-root-MuiIconButton-root{
+    color: rgb(247 247 247 / 54%) !important;
+}

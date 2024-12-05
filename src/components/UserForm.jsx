@@ -17,7 +17,7 @@ export default function PlayerDetails() {
   const getData = localStorage.getItem("formData")
   const getParseDate = JSON.parse(getData);
   console.log(getParseDate, 'getParseDate');
-const [photo,setPhoto]=useState(null)
+  const [photo, setPhoto] = useState(null)
   const [formData, setFormData] = useState({
     fullName: getParseDate?.fullName,
     dob: getParseDate?.dob ? dayjs(getParseDate.dob) : null,
@@ -44,7 +44,7 @@ const [photo,setPhoto]=useState(null)
     email: string().email("invalid email format").required("email is required"),
     photo: Yup.mixed()
       .required("Photo is required")
-      ,
+    ,
 
     preferredRole: Yup.string().required("Preferred role is required"),
     bowlingType: Yup.string().required("Bowling type is required"),
@@ -71,7 +71,7 @@ const [photo,setPhoto]=useState(null)
     // setPhoto(file.target.files[0])
     // localStorage.setItem('Photo',photo)
     console.log();
-    
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData(prevData => ({
@@ -175,18 +175,16 @@ const [photo,setPhoto]=useState(null)
               <label htmlFor="dob" className="block text-sm font-medium">
                 Date of Birth
               </label>
-              <div className="relative border border-gray-800 rounded-lg">
+            
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-          id="dob"
-          value={formData.dob}
-          onChange={handleDateChange}
-          renderInput={(props) => <TextField {...props} fullWidth />}
-        />
+                  <DatePicker
+                    id="dob"
+                    value={formData.dob}
+                    onChange={handleDateChange}
+                    renderInput={(props) => <TextField {...props} fullWidth />}
+                  />
                 </LocalizationProvider>
-                {error?.dob && <p className="text-red">{error?.dob}</p>}
-                <Calendar className="absolute right-3 top-4 h-5 w-5 text-gray-400" />
-              </div>
+                {error?.dob && <p className="text-red">{error?.dob}</p>}            
             </div>
 
             <div className="relative space-y-2">

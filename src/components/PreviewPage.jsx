@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jsPDF from 'jspdf'; // To generate PDF
+import Swal from 'sweetalert2'; // Import SweetAlert2 for success notification
 
 export default function PreviewPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(null);
   const [isAgreed, setIsAgreed] = useState(false); // To track checkbox state
   const [isSubmitted, setIsSubmitted] = useState(false); // To prevent multiple submissions
+  const [isLoading, setIsLoading] = useState(false); // To track loading state
 
   useEffect(() => {
     // Retrieve formData from localStorage
@@ -22,56 +24,49 @@ export default function PreviewPage() {
     return <div className='text-white'>No data found. Please fill out the form first.</div>;
   }
 
-
-
   // Handle the "Agree to Terms" checkbox
   const handleAgreeChange = (e) => {
     setIsAgreed(e.target.checked);
   };
+
   const location = useLocation();
   const file = location.state?.file;
-
-  // useEffect(() => {
-  //   if (file) {
-  //     sendFileToBackend(file); // Send the file to the backend
-  //   }
-  // }, [file]);
 
   // Submit the data and generate PDF
   const handleSubmit = async () => {
     if (isSubmitted) return; // Prevent multiple submissions
     setIsSubmitted(true);
-   const Photo = localStorage.getItem('Photo')
+    setIsLoading(true); // Start loading when the submit button is clicked
+
+    const Photo = localStorage.getItem('Photo');
 
     try {
       // Post data to the API
       const formDatas = new FormData();
   
       // Append form fields
-      formDatas.append('fullName', formData?.fullName)
-      formDatas.append('dateOfBirth', formData?.dob)
-      formDatas.append('contactNumber', formData?.contact)
+      formDatas.append('fullName', formData?.fullName);
+      formDatas.append('dateOfBirth', formData?.dob);
+      formDatas.append('contactNumber', formData?.contact);
       formDatas.append('email', formData?.email);
       formDatas.append('preferredRole', formData?.preferredRole);
-       formDatas.append('playerInformation', 'd');
-       formDatas.append('bowlingType', formData?.bowlingType);
-       formDatas.append('specialSkills', 'd');
-       formDatas.append('jerseySize', formData?.jerseySize);
-       formDatas.append('medicalConditions',formData?.medicalCondition=="Yes"? formData?.medicalConditionDetails:formData?.medicalCondition);
-       formDatas.append('emergencyContactName', formData?.emergencyContactName);
-       formDatas.append('favoriteCricketer', formData?.favoriteCricketer);
-       formDatas.append('acknowledgement', "Yes");
-       
-       formDatas.append('emergencyContactInfo', formData?.emergencyContact);
+      formDatas.append('playerInformation', 'd');
+      formDatas.append('bowlingType', formData?.bowlingType);
+      formDatas.append('specialSkills', 'd');
+      formDatas.append('jerseySize', formData?.jerseySize);
+      formDatas.append('medicalConditions', formData?.medicalCondition === "Yes" ? formData?.medicalConditionDetails : formData?.medicalCondition);
+      formDatas.append('emergencyContactName', formData?.emergencyContactName);
+      formDatas.append('favoriteCricketer', formData?.favoriteCricketer);
+      formDatas.append('acknowledgement', "Yes");
+      formDatas.append('emergencyContactInfo', formData?.emergencyContact);
+      formDatas.append('date', '12-10-2024');
 
-       formDatas.append('date', '12-10-2024');
-       if (formData?.photo) {
-        formDatas.append('photo',file);
+      if (formData?.photo) {
+        formDatas.append('photo', file);
       }
-   
 
-
-      await axios.post('https://marmaregisterformbe.onrender.com/users', formDatas,{
+      // Sending data to backend
+      await axios.post('https://marmaregisterformbe.onrender.com/users', formDatas, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -99,15 +94,38 @@ export default function PreviewPage() {
           doc.addImage(img, 'JPEG', 150, 30, 50, 50);
           doc.save('player-details.pdf'); // Download the PDF
 
-          localStorage.clear();
-
-          navigate('/loading')
+          localStorage.clear(); // Clear local storage after submission
+          Swal.fire({
+            title: 'Success!',
+            text: 'Player details submitted successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+          }).then(() => {
+            navigate('/loading'); // Navigate after successful submission
+          });
         };
       } else {
-        doc.save('player-details.pdf'); // Download the PDF
+        doc.save('player-details.pdf'); // Download the PDF without image
+        Swal.fire({
+          title: 'Success!',
+          text: 'Player details submitted successfully!',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          localStorage.clear();
+          navigate('/loading');
+        });
       }
     } catch (error) {
       console.error('Error submitting form data:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Something went wrong. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setIsLoading(false); // Stop loading after submission attempt
     }
   };
 
@@ -116,8 +134,13 @@ export default function PreviewPage() {
       <div className="max-w-[210mm] mx-auto p-4 border border-gray-300 shadow-lg">
         <h1 className="text-2xl font-semibold text-center mb-6">Player Details Preview</h1>
 
+        {isLoading && (
+          <div className="absolute inset-0 bg-white opacity-75 flex justify-center items-center z-10">
+            <div className="loader"></div>
+          </div>
+        )}
+
         <div className="flex justify-between items-start">
-          {/* Left section */}
           <div className="flex-1">
             {formData.photo && (
               <div className="mb-4">
@@ -125,78 +148,49 @@ export default function PreviewPage() {
                 <img src={formData.photo} alt="Uploaded" width="200" />
               </div>
             )}
-            {/* Full Name */}
             <div className="mb-4">
               <h2 className="font-medium">Full Name</h2>
               <p>{formData.fullName}</p>
             </div>
-
-            {/* Date of Birth */}
             <div className="mb-4">
               <h2 className="font-medium">Date of Birth</h2>
               <p>{formData.dob}</p>
             </div>
-
-            {/* Contact Number */}
             <div className="mb-4">
               <h2 className="font-medium">Contact Number</h2>
               <p>{formData.contact}</p>
             </div>
-
-            {/* E-mail Address */}
             <div className="mb-4">
               <h2 className="font-medium">E-mail Address</h2>
               <p>{formData.email}</p>
             </div>
-
-            {/* Preferred Role */}
             <div className="mb-4">
               <h2 className="font-medium">Preferred Role</h2>
               <p>{formData.preferredRole}</p>
             </div>
-
-            {/* Bowling Type */}
             <div className="mb-4">
               <h2 className="font-medium">Bowling Type</h2>
               <p>{formData.bowlingType}</p>
             </div>
-
-            {/* Jersey Size */}
             <div className="mb-4">
               <h2 className="font-medium">Jersey Size</h2>
               <p>{formData.jerseySize}</p>
             </div>
-
-            {/* Medical Condition */}
             <div className="mb-4">
               <h2 className="font-medium">Medical Condition</h2>
               <p>{formData.medicalCondition === "Yes" ? formData.medicalConditionDetails : "No"}</p>
             </div>
-
-            {/* Emergency Contact */}
             <div className="mb-4">
               <h2 className="font-medium">Emergency Contact</h2>
-              <p>
-                {formData.emergencyContactName} - {formData.emergencyContact}
-              </p>
+              <p>{formData.emergencyContactName} - {formData.emergencyContact}</p>
             </div>
-
-            {/* Favourite Cricketer */}
             <div className="mb-4">
               <h2 className="font-medium">Favourite Cricketer</h2>
               <p>{formData.favoriteCricketer}</p>
             </div>
           </div>
-
-          {/* Right section */}
-          {/* <div className="flex-none ml-6">
-            {formData.photo && (
-              <img src={formData.photo} alt="Uploaded" width="200" />
-            )}
-          </div> */}
         </div>
 
-        {/* Terms and Conditions */}
         <div>
           <div className="mb-4">
             <label>
@@ -232,3 +226,23 @@ export default function PreviewPage() {
     </div>
   );
 }
+
+        {/* <div>
+          <div className="mb-4">
+            <label>
+              <input type="checkbox" checked={isAgreed} onChange={handleAgreeChange} />
+              <span className="ml-2">I agree to the terms and conditions</span>
+            </label>
+          </div>
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            disabled={!isAgreed || isLoading}
+          >
+            {isLoading ? 'Submitting...' : 'Submit & Generate PDF'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+} */}

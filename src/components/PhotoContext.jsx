@@ -1,4 +1,3 @@
-// PhotoContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 // Create a Context to store the photo globally
