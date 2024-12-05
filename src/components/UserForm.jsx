@@ -7,7 +7,7 @@ import { string } from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
-
+import { usePhoto } from "./PhotoContext";
 export default function PlayerDetails() {
 
 
@@ -18,12 +18,13 @@ export default function PlayerDetails() {
   const getParseDate = JSON.parse(getData);
   console.log(getParseDate, 'getParseDate');
   const [photo, setPhoto] = useState(null)
+
   const [formData, setFormData] = useState({
     fullName: getParseDate?.fullName,
     dob: getParseDate?.dob ? dayjs(getParseDate.dob) : null,
     contact: getParseDate?.contact,
     email: getParseDate?.email,
-    photo: getParseDate?.photo,
+    photo: photo,
     preferredRole: getParseDate?.preferredRole,
     bowlingType: getParseDate?.bowlingType,
     jerseySize: getParseDate?.jerseySize,
@@ -55,6 +56,7 @@ export default function PlayerDetails() {
     }),
     emergencyContactName: Yup.string().required("Emergency contact name is required"),
     emergencyContact: Yup.string().required("Emergency contact number is required").matches(/^\d{10}$/, "Emergency contact number must be 10 digits"),
+    favoriteCricketer: Yup.string().required("favoriteCricketer Name is required"),
   })
   // Handle input change
   const handleChange = (file) => {
@@ -68,7 +70,7 @@ export default function PlayerDetails() {
 
 
   const handleFileChange = (file) => {
-    // setPhoto(file.target.files[0])
+    setPhoto(file.target.files[0])
     // localStorage.setItem('Photo',photo)
     console.log();
 
@@ -147,7 +149,7 @@ export default function PlayerDetails() {
                 onChange={handleChange}
                 className="w-full p-2 bg-black border border-gray-800 text-white rounded"
               />
-              {error?.fullName && <p className="text-red">{error?.fullName}</p>}
+              {error?.fullName && <p className="text-red-400">{error?.fullName}</p>}
               <User className="absolute right-3 top-8  text-gray-400 h-5 w-5" />
             </div>
 
@@ -184,7 +186,7 @@ export default function PlayerDetails() {
                     renderInput={(props) => <TextField {...props} fullWidth />}
                   />
                 </LocalizationProvider>
-                {error?.dob && <p className="text-red">{error?.dob}</p>}            
+                {error?.dob && <p className="text-red-400">{error?.dob}</p>}            
             </div>
 
             <div className="relative space-y-2">
@@ -202,7 +204,7 @@ export default function PlayerDetails() {
               {formData.contact && !/^\d{10}$/.test(formData.contact) && (
                 <p className="text-red-500 text-xs mt-1">Please enter a valid 10-digit phone number.</p>
               )}
-              {error?.contact && <p className="text-red">{error?.contact}</p>}
+              {error?.contact && <p className="text-red-400">{error?.contact}</p>}
               <Phone className="absolute right-3 top-8 h-5 w-5 text-gray-400" />
             </div>
 
@@ -218,14 +220,14 @@ export default function PlayerDetails() {
                 onChange={handleChange}
                 className="w-full p-2 bg-black border border-gray-800 text-white rounded"
               />
-              {error?.email && <p className="text-red">{error?.email}</p>}
+              {error?.email && <p className="text-red-400">{error?.email}</p>}
               <Mail className="absolute right-3 top-8 h-5 w-5 text-gray-400" />
             </div>
 
             <div className="space-y-2">
               <label>Attach Recent Photo</label>
-              <ImageUpload onChange={handleFileChange} file={file} setFile={setFile} />
-              {error?.photo && <p className="text-red">{error?.photo}</p>}
+              <ImageUpload onChange={handleFileChange} file={file} setFile={setFile}/>
+              {error?.photo && <p className="text-red-400">{error?.photo}</p>}
             </div>
 
             <div className="relative space-y-2">
@@ -246,7 +248,7 @@ export default function PlayerDetails() {
                   <option value="Wicket Keeper">Wicket Keeper</option>
                   <option value="All Rounder">All Rounder</option>
                 </select>
-                {error?.preferredRole && <p className="text-red">{error?.preferredRole}</p>}
+                {error?.preferredRole && <p className="text-red-400">{error?.preferredRole}</p>}
                 <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
               </div>
 
@@ -270,7 +272,7 @@ export default function PlayerDetails() {
                   <option value="Off Spin">Off Spin</option>
                   <option value="Leg Spin">Leg Spin</option>
                 </select>
-                {error?.bowlingType && <p className="text-red">{error?.bowlingType}</p>}
+                {error?.bowlingType && <p className="text-red-400">{error?.bowlingType}</p>}
                 <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
               </div>
             </div>
@@ -297,7 +299,7 @@ export default function PlayerDetails() {
                   <option value="XL" />
                   <option value="XXL" />
                 </datalist>
-                {error?.jerseySize && <p className="text-red">{error?.jerseySize}</p>}
+                {error?.jerseySize && <p className="text-red-400">{error?.jerseySize}</p>}
               </div>
             </div>
 
@@ -334,7 +336,7 @@ export default function PlayerDetails() {
                 </label>
               </div>
 
-              {error?.medicalCondition && <p className="text-red">{error?.medicalCondition}</p>}
+              {error?.medicalCondition && <p className="text-red-400">{error?.medicalCondition}</p>}
 
               {/* Conditionally render input field if "Yes" is selected */}
               {formData.medicalCondition === "Yes" && (
@@ -414,7 +416,7 @@ export default function PlayerDetails() {
                   className="w-full bg-black  text-white"
                   placeholder="Enter your favorite cricketer"
                 />
-
+                  {error?.favoriteCricketer&& <p className="text-red-500">{error?.favoriteCricketer}</p>}
               </div>
             </div>
 

@@ -23,14 +23,14 @@ export function ImageUpload({ onChange, file, setFile }) {
       reader.onloadend = () => {
         const base64Image = reader.result;
         setPreview(base64Image); // Update the preview
-        localStorage.setItem("uploadedImage", base64Image); // Store the image in localStorage
-        setFile(file); // Store the file for backend submission
+        localStorage.setItem("uploadedImage", base64Image); 
+        setFile(file); 
 
-        // Update the photo in the context
-        setPhoto(base64Image); // Update the global state with the new photo
+        
+        setPhoto(base64Image); 
 
         if (onChange) {
-          onChange(file); // Call onChange handler with the file
+          onChange(file);
         }
       };
       reader.readAsDataURL(file); // Convert the image to a Base64 string for preview
