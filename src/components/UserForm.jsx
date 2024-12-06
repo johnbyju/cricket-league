@@ -13,18 +13,21 @@ export default function PlayerDetails() {
 
 
   const navigate = useNavigate();
+  const getPhoto = localStorage.getItem('photo')
   const [file, setFile] = useState(null);
+  console.log(file,'fileee');
   const getData = localStorage.getItem("formData")
   const getParseDate = JSON.parse(getData);
   console.log(getParseDate, 'getParseDate');
-  const [photo, setPhoto] = useState(null)
+  const { photo, setPhoto } = usePhoto();
+
 
   const [formData, setFormData] = useState({
     fullName: getParseDate?.fullName,
     dob: getParseDate?.dob ? dayjs(getParseDate.dob) : null,
     contact: getParseDate?.contact,
     email: getParseDate?.email,
-    photo: photo,
+    photo: photo || null ,
     preferredRole: getParseDate?.preferredRole,
     bowlingType: getParseDate?.bowlingType,
     jerseySize: getParseDate?.jerseySize,
@@ -67,19 +70,21 @@ export default function PlayerDetails() {
   };
 
 
+  // const handleFileChange =(file)=>{
+  //   setPreview(newPreview);
+    
+  // }
 
 
   const handleFileChange = (file) => {
-    setPhoto(file.target.files[0])
+    // setPhoto(file.target.files[0])
     // localStorage.setItem('Photo',photo)
-    console.log();
+    console.log('soehreiojreorg');
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setFormData(prevData => ({
-        ...prevData,
-        photo: reader.result // Save Base64 string to formData
-      }));
+      setFormData(prevData => ({ ...prevData, photo: reader.result}));
+      setPhoto(reader.result)
     };
     reader.readAsDataURL(file); // Convert image to Base64
   };
@@ -98,6 +103,7 @@ export default function PlayerDetails() {
   };
 
   const handleFormSubmit = async () => {
+    console.log(formData,'formData');
     try {
       await validationSchema.validate(formData, { abortEarly: false });
 

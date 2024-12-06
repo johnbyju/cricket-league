@@ -31,6 +31,7 @@ export default function PreviewPage() {
 
   const location = useLocation();
   const file = location.state?.file;
+  console.log(file);
 
   // Submit the data and generate PDF
   const handleSubmit = async () => {
