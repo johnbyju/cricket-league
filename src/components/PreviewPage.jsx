@@ -44,7 +44,7 @@ export default function PreviewPage() {
     try {
       // Post data to the API
       const formDatas = new FormData();
-  
+
       // Append form fields
       formDatas.append('fullName', formData?.fullName);
       formDatas.append('dateOfBirth', formData?.dob);
@@ -75,17 +75,41 @@ export default function PreviewPage() {
 
       // Generate PDF
       const doc = new jsPDF();
-      doc.text('Player Details Preview', 14, 20);
+
+      // Get current date and time
+      const now = new Date();
+
+      // Format the date as DD/MM/YYYY
+      const day = String(now.getDate()).padStart(2, '0');  // Add leading zero if day < 10
+      const month = String(now.getMonth() + 1).padStart(2, '0');  // Months are zero-indexed, so add 1
+      const year = now.getFullYear();
+      const dateOfApplication = `${day}/${month}/${year}`;
+
+      // Format the time as HH:mm:ss
+      const timeOfApplication = now.toLocaleTimeString(); // Format: HH:mm:ss
+
+      // Get page width to position text on the right
+      const pageWidth = doc.internal.pageSize.width;
+
+      // Add the date and time at the top-right corner
+      doc.text(`Date of Application: ${dateOfApplication}`, pageWidth - 14, 10, null, null, 'right');  // Right-aligned
+      doc.text(`Time of Application: ${timeOfApplication}`, pageWidth - 14, 20, null, null, 'right'); // Right-aligned
+
+      // Add the player details below
+      doc.text('Player Details Preview', 14, 10);
       doc.text(`Full Name: ${formData.fullName}`, 14, 30);
-      doc.text(`Date of Birth: ${formData.dob}`, 14, 40);
-      doc.text(`Contact Number: ${formData.contact}`, 14, 50);
-      doc.text(`Email: ${formData.email}`, 14, 60);
-      doc.text(`Preferred Role: ${formData.preferredRole}`, 14, 70);
-      doc.text(`Bowling Type: ${formData.bowlingType}`, 14, 80);
-      doc.text(`Jersey Size: ${formData.jerseySize}`, 14, 90);
-      doc.text(`Medical Condition: ${formData.medicalCondition === 'Yes' ? formData.medicalConditionDetails : 'No'}`, 14, 100);
-      doc.text(`Emergency Contact: ${formData.emergencyContactName} - ${formData.emergencyContact}`, 14, 110);
-      doc.text(`Favorite Cricketer: ${formData.favoriteCricketer}`, 14, 120);
+      doc.text(`Date of Birth: ${formData.dob}`, 14, 70);
+      doc.text(`Contact Number: ${formData.contact}`, 14, 90);
+      doc.text(`Email: ${formData.email}`, 14, 110);
+      doc.text(`Preferred Role: ${formData.preferredRole}`, 14, 130);
+      doc.text(`Bowling Type: ${formData.bowlingType}`, 14, 150);
+      doc.text(`Jersey Size: ${formData.jerseySize}`, 14, 170);
+      doc.text(`Medical Condition: ${formData.medicalCondition === 'Yes' ? formData.medicalConditionDetails : 'No'}`, 14, 190);
+      doc.text(`Emergency Contact Person Name & Number: ${formData.emergencyContactName} - ${formData.emergencyContact}`, 14, 210);
+      doc.text(`Favorite Cricketer: ${formData.favoriteCricketer}`, 14, 230);
+
+
+
 
       if (formData.photo) {
         // Add photo to the PDF (ensure the image is on the right side)
@@ -199,10 +223,10 @@ export default function PreviewPage() {
               <span className="ml-2">I agree to the terms and conditions</span>
             </label>
             {handleAgreeChange && !isAgreed && (
-            <p className="text-red-600 text-sm mt-2">Please select the "I agree to the terms and conditions" checkbox.</p>
-          )}
+              <p className="text-red-600 text-sm mt-2">Please select the "I agree to the terms and conditions" checkbox.</p>
+            )}
           </div>
-         
+
           <div className="flex gap-5 justify-center">
             <button
               className="p-3 rounded-lg bg-red-600 hover:bg-red-700 text-white"
@@ -213,8 +237,8 @@ export default function PreviewPage() {
 
             <button
               className={`p-2 rounded-lg text-white  ${isAgreed ? 'bg-green-500' : 'bg-red-400'}`}
-              onClick={handleSubmit} 
-              disabled={!isAgreed}   
+              onClick={handleSubmit}
+              disabled={!isAgreed}
             >
               Submit & Download PDF
             </button>
@@ -228,7 +252,7 @@ export default function PreviewPage() {
   );
 }
 
-        {/* <div>
+{/* <div>
           <div className="mb-4">
             <label>
               <input type="checkbox" checked={isAgreed} onChange={handleAgreeChange} />
