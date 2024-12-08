@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jsPDF from 'jspdf'; // To generate PDF
 import Swal from 'sweetalert2'; // Import SweetAlert2 for success notification
@@ -21,7 +21,18 @@ export default function PreviewPage() {
 
   // If no form data, show an error message
   if (!formData) {
-    return <div className='text-white'>No data found. Please fill out the form first.</div>;
+   
+    return (
+      <>
+        <div className='text-white'>No data found. Please fill out the form first.</div>
+        <button
+          className="p-3 m-4 rounded-lg bg-red-600 hover:bg-red-700 text-white"
+          onClick={() => navigate('/')}
+        >
+          Go Back
+        </button>
+      </>
+    );
   }
 
   // Handle the "Agree to Terms" checkbox
@@ -98,15 +109,15 @@ export default function PreviewPage() {
       // Add the player details below
       doc.text('Player Details Preview', 14, 10);
       doc.text(`Full Name: ${formData.fullName}`, 14, 30);
-      doc.text(`Date of Birth: ${formData.dob}`, 14, 70);
-      doc.text(`Contact Number: ${formData.contact}`, 14, 90);
-      doc.text(`Email: ${formData.email}`, 14, 110);
-      doc.text(`Preferred Role: ${formData.preferredRole}`, 14, 130);
-      doc.text(`Bowling Type: ${formData.bowlingType}`, 14, 150);
-      doc.text(`Jersey Size: ${formData.jerseySize}`, 14, 170);
-      doc.text(`Medical Condition: ${formData.medicalCondition === 'Yes' ? formData.medicalConditionDetails : 'No'}`, 14, 190);
-      doc.text(`Emergency Contact Person Name & Number: ${formData.emergencyContactName} - ${formData.emergencyContact}`, 14, 210);
-      doc.text(`Favorite Cricketer: ${formData.favoriteCricketer}`, 14, 230);
+      doc.text(`Date of Birth: ${formData.dob}`, 14, 50);
+      doc.text(`Contact Number: ${formData.contact}`, 14, 70);
+      doc.text(`Email: ${formData.email}`, 14, 90);
+      doc.text(`Preferred Role: ${formData.preferredRole}`, 14, 110);
+      doc.text(`Bowling Type: ${formData.bowlingType}`, 14, 130);
+      doc.text(`Jersey Size: ${formData.jerseySize}`, 14, 150);
+      doc.text(`Medical Condition: ${formData.medicalCondition === 'Yes' ? formData.medicalConditionDetails : 'No'}`, 14, 170);
+      doc.text(`Emergency Contact Person Name & Number: ${formData.emergencyContactName} - ${formData.emergencyContact}`, 14, 190);
+      doc.text(`Favorite Cricketer: ${formData.favoriteCricketer}`, 14, 220);
 
 
 

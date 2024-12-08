@@ -14,8 +14,10 @@ export default function App() {
     }, 3000);
 
     return () => clearTimeout(timer);
+   
   }, []);
 
+  
   return (
     <PhotoProvider> {/* Wrap your app in the ImageProvider */}
       {isLoading ? (
