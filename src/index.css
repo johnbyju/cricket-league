@@ -15,12 +15,16 @@ html{
 
 
 .css-1oy18r0{
-    width: 100vw !important;
+    width: 93vw !important;
 }
 
 .css-1eeu2ag{
   min-width: 92vw !important;
+  border-radius: 4px;
 }
+
+
+
 .css-1oy18r0 {
     font-family: Roboto, Helvetica, Arial, sans-serif;
     font-weight: 400;
