@@ -4,6 +4,7 @@ import axios from 'axios';
 import jsPDF from 'jspdf'; // To generate PDF
 import Swal from 'sweetalert2'; // Import SweetAlert2 for success notification
 
+
 export default function PreviewPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(null);
@@ -62,9 +63,9 @@ export default function PreviewPage() {
       formDatas.append('contactNumber', formData?.contact);
       formDatas.append('email', formData?.email);
       formDatas.append('preferredRole', formData?.preferredRole);
-      formDatas.append('playerInformation', 'd');
+      formDatas.append('playerInformation', null);
       formDatas.append('bowlingType', formData?.bowlingType);
-      formDatas.append('specialSkills', 'd');
+      formDatas.append('specialSkills', null);
       formDatas.append('jerseySize', formData?.jerseySize);
       formDatas.append('medicalConditions', formData?.medicalCondition === "Yes" ? formData?.medicalConditionDetails : formData?.medicalCondition);
       formDatas.append('emergencyContactName', formData?.emergencyContactName);
@@ -109,7 +110,8 @@ export default function PreviewPage() {
       // Add the player details below
       doc.text('Player Details Preview', 14, 10);
       doc.text(`Full Name: ${formData.fullName}`, 14, 30);
-      doc.text(`Date of Birth: ${formData.dob}`, 14, 50);
+      const formattedDate = new Date(formData.dob).toLocaleDateString('en-GB'); 
+      doc.text(`Date of Birth: ${formattedDate}`, 14, 50);
       doc.text(`Contact Number: ${formData.contact}`, 14, 70);
       doc.text(`Email: ${formData.email}`, 14, 90);
       doc.text(`Preferred Role: ${formData.preferredRole}`, 14, 110);
@@ -190,7 +192,8 @@ export default function PreviewPage() {
             </div>
             <div className="mb-4">
               <h2 className="font-medium">Date of Birth</h2>
-              <p>{formData.dob}</p>
+              
+              <p>{new Date(formData.dob).toLocaleDateString('en-GB')}</p>
             </div>
             <div className="mb-4">
               <h2 className="font-medium">Contact Number</h2>
