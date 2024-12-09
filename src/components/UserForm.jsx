@@ -8,6 +8,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
 import { usePhoto } from "./PhotoContext";
+import './Custom.css'
 export default function PlayerDetails() {
 
 
@@ -184,10 +185,11 @@ export default function PlayerDetails() {
                 Date of Birth
               </label>
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} >
                 <DatePicker
                   id="dob"
                   className="bg-[#171717C4]"
+                  
                   value={formData.dob ? dayjs(formData.dob, 'DD/MM/YYYY') : null}
                   onChange={handleDateChange}
                   renderInput={(props) => <TextField {...props} fullWidth />}

@@ -14,67 +14,36 @@ html{
 }
 
 
-
-.css-jupps9-MuiInputBase-root-MuiOutlinedInput-root{
-    width: 91vw !important;
-    cursor: pointer !important;
-    border: 1px solid rgba(75, 75, 75, 0.779) !important;
+.css-1oy18r0{
+    width: 100vw !important;
 }
 
-.css-oeq6yz-MuiButtonBase-root-MuiIconButton-root{
-    color: rgb(247 247 247 / 54%) !important;
+.css-1eeu2ag{
+  min-width: 100vw !important;
 }
-
-.css-1umw9bq-MuiSvgIcon-root{
-    fill: white !important;
-}
-
-.css-oeq6yz-MuiButtonBase-root-MuiIconButton-root {
-    display: -webkit-inline-box;
-    display: -webkit-inline-flex;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
-    -webkit-align-items: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    -webkit-justify-content: center;
-    justify-content: center;
-    position: relative;
+.css-1oy18r0 {
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.4375em;
+    letter-spacing: 0.00938em;
+    color: white !important;
     box-sizing: border-box;
-    /* -webkit-tap-highlight-color: transparent; */
-    /* background-color: transparent; */
-    outline: 0;
-    border: 0;
-    margin: 0;
-    border-radius: 0;
-    padding: 0;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    vertical-align: middle;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    -webkit-text-decoration: none;
-    text-decoration: none;
-    color: white !important;
-    text-align: center;
-    -webkit-flex: 0 0 auto;
-    -ms-flex: 0 0 auto;
-    flex: 0 0 auto;
-    /* font-size: 1.5rem; */
-    /* padding: 8px; */
-    /* border-radius: 50%; */
-    color: white !important;
-    -webkit-transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    /* transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; */
-    /* --IconButton-hoverBg: rgba(0, 0, 0, 0.04); */
-    margin-right: -12px;
+    cursor: text;
+    display: inline-flex
+;
+    -webkit-box-align: center;
+    align-items: center;
+    position: relative;
+    border-radius: 4px;
+    padding-right: 14px;
 }
+
+
+
+
+
+
 
 
 input, select, textarea {
@@ -82,3 +51,5 @@ input, select, textarea {
     color: white; /* Ensure text is readable */
     border: 1px solid #2a2a2a; /* Optional: Slight border for distinction */
   }
+
+
