@@ -22,7 +22,7 @@ export default function PreviewPage() {
 
   // If no form data, show an error message
   if (!formData) {
-   
+
     return (
       <>
         <div className='text-white'>No data found. Please fill out the form first.</div>
@@ -110,7 +110,7 @@ export default function PreviewPage() {
       // Add the player details below
       doc.text('Player Details Preview', 14, 10);
       doc.text(`Full Name: ${formData.fullName}`, 14, 30);
-      const formattedDate = new Date(formData.dob).toLocaleDateString('en-GB'); 
+      const formattedDate = new Date(formData.dob).toLocaleDateString('en-GB');
       doc.text(`Date of Birth: ${formattedDate}`, 14, 50);
       doc.text(`Contact Number: ${formData.contact}`, 14, 70);
       doc.text(`Email: ${formData.email}`, 14, 90);
@@ -168,13 +168,16 @@ export default function PreviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black">
-      <div className="max-w-[210mm] mx-auto p-4 border border-gray-300 shadow-lg">
+    <div className=" bg-white text-black">
+      <div className="max-w-[210mm] mx-auto px-2  border border-gray-300 shadow-lg">
         <h1 className="text-2xl font-semibold text-center mb-6">Player Details Preview</h1>
 
         {isLoading && (
-          <div className="absolute inset-0 bg-white opacity-75 flex justify-center items-center z-10">
-            <div className="loader"></div>
+          <div className="fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-black bg-opacity-75 z-50">
+            <div className="text-center text-white">
+              <h2 className="text-2xl font-semibold">Submitting your details...</h2>
+              <p>Please wait while we process your information...</p>
+            </div>
           </div>
         )}
 
@@ -192,7 +195,7 @@ export default function PreviewPage() {
             </div>
             <div className="mb-4">
               <h2 className="font-medium">Date of Birth</h2>
-              
+
               <p>{new Date(formData.dob).toLocaleDateString('en-GB')}</p>
             </div>
             <div className="mb-4">
