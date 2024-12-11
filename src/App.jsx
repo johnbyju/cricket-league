@@ -6,7 +6,7 @@ import LoadingScreen from './components/LoadingScreen';
 import { PhotoProvider } from './components/PhotoContext';
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {

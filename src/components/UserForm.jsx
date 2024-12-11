@@ -96,7 +96,7 @@ export default function PlayerDetails() {
   //   if (true) {
   //     console.log(formData); 
   //   }
-  // };
+  // }; 
 
 
   const handleDateChange = (date) => {
