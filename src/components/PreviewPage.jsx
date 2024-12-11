@@ -107,8 +107,15 @@ export default function PreviewPage() {
       doc.text(`Date of Application: ${dateOfApplication}`, pageWidth - 14, 10, null, null, 'right');  // Right-aligned
       doc.text(`Time of Application: ${timeOfApplication}`, pageWidth - 14, 20, null, null, 'right'); // Right-aligned
 
-      // Add the player details below
-      doc.text('Player Details Preview', 14, 10);
+      // The Header Tittle
+      doc.setFontSize(16); 
+      doc.setFont('helvetica', 'bold');
+      doc.text('Player Details Form', 14, 10);
+
+      // The Player Informaation
+      doc.setFontSize(12); 
+      doc.setFont('helvetica', 'normal'); 
+
       doc.text(`Full Name: ${formData.fullName}`, 14, 30);
       const formattedDate = new Date(formData.dob).toLocaleDateString('en-GB');
       doc.text(`Date of Birth: ${formattedDate}`, 14, 50);
@@ -155,10 +162,10 @@ export default function PreviewPage() {
         });
       }
     } catch (error) {
-      console.error('Error submitting form data:', error);
+      console.error('Error submitting form data:', error?.response?.data?.validation?.body?.message );
       Swal.fire({
         title: 'Error',
-        text: 'Something went wrong. Please try again.',
+        text: error?.response?.data?.validation?.body?.message ,
         icon: 'error',
         confirmButtonText: 'OK',
       });
@@ -240,7 +247,7 @@ export default function PreviewPage() {
               <span className="ml-2">I agree to the terms and conditions</span>
             </label>
             {handleAgreeChange && !isAgreed && (
-              <p className="text-red-600 text-sm mt-2">Please select the "I agree to the terms and conditions" checkbox.</p>
+              <p className="text-red-600 text-sm mt-2">Please select the "I agree to the terms and conditions"</p>
             )}
           </div>
 

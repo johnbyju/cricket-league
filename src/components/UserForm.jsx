@@ -48,7 +48,7 @@ export default function PlayerDetails() {
     contact: string().required("Phone number is Required").matches(/^\d{10}$/, "phone number must be 10 digit"),
     email: string().email("invalid email format").required("email is required"),
     photo: Yup.mixed()
-      .required("Photo is required")
+      .required("The photo must be less than 3MB.")
     ,
 
     preferredRole: Yup.string().required("Preferred role is required"),

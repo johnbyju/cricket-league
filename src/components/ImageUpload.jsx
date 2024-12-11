@@ -83,7 +83,7 @@ export function ImageUpload({ onChange,file,setFile }) {
         <div className="aspect-[3/2] w-full flex flex-col items-center justify-center gap-2 p-4">
           <UploadCloud className="h-8 w-8 text-gray-400" />
           <p className="text-sm text-gray-400">
-            {isDragActive ? "Drop photo here" : "Drag photo here"}
+            {isDragActive ? "Upload less than 3MB" : "Upload less than 3MB"}
           </p>
         </div>
       )}
