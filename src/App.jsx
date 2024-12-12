@@ -4,6 +4,7 @@ import PlayerDetails from './components/UserForm';
 import PreviewPage from './components/PreviewPage';
 import LoadingScreen from './components/LoadingScreen';
 import { PhotoProvider } from './components/PhotoContext';
+import Admin from './components/Admin';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/" element={<PlayerDetails />} />
           <Route path="/preview" element={<PreviewPage />} />
           <Route path="/loading" element={<LoadingScreen />} />
+          <Route path="/admin" element={<Admin/>} />
         </Routes>
       )}
     </PhotoProvider>

@@ -108,13 +108,13 @@ export default function PreviewPage() {
       doc.text(`Time of Application: ${timeOfApplication}`, pageWidth - 14, 20, null, null, 'right'); // Right-aligned
 
       // The Header Tittle
-      doc.setFontSize(16); 
+      doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
       doc.text('Player Details Form', 14, 10);
 
       // The Player Informaation
-      doc.setFontSize(12); 
-      doc.setFont('helvetica', 'normal'); 
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
 
       doc.text(`Full Name: ${formData.fullName}`, 14, 30);
       const formattedDate = new Date(formData.dob).toLocaleDateString('en-GB');
@@ -162,10 +162,10 @@ export default function PreviewPage() {
         });
       }
     } catch (error) {
-      console.error('Error submitting form data:', error?.response?.data?.validation?.body?.message );
+      console.error('Error submitting form data:', error?.response?.data?.validation?.body?.message);
       Swal.fire({
         title: 'Error',
-        text: error?.response?.data?.validation?.body?.message ,
+        text: error?.response?.data?.validation?.body?.message,
         icon: 'error',
         confirmButtonText: 'OK',
       });
@@ -174,6 +174,8 @@ export default function PreviewPage() {
     }
   };
 
+
+  
   return (
     <div className=" bg-white text-black">
       <div className="max-w-[210mm] mx-auto px-2  border border-gray-300 shadow-lg">
@@ -266,9 +268,8 @@ export default function PreviewPage() {
             >
               Submit & Download PDF
             </button>
-
-
           </div>
+
 
         </div>
       </div>
@@ -276,22 +277,3 @@ export default function PreviewPage() {
   );
 }
 
-{/* <div>
-          <div className="mb-4">
-            <label>
-              <input type="checkbox" checked={isAgreed} onChange={handleAgreeChange} />
-              <span className="ml-2">I agree to the terms and conditions</span>
-            </label>
-          </div>
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            disabled={!isAgreed || isLoading}
-          >
-            {isLoading ? 'Submitting...' : 'Submit & Generate PDF'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-} */}

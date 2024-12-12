@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
+import Swal from "sweetalert2";
 
 
 export function ImageUpload({ onChange,file,setFile }) {
@@ -19,23 +20,35 @@ export function ImageUpload({ onChange,file,setFile }) {
   //   [onChange]
   // );
 
-  const onDrop = useCallback((acceptedFiles = []) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Image = reader.result;
-        setPreview(base64Image); // Update the preview
-        localStorage.setItem("uploadedImage", base64Image); // Store the image in localStorage
-        setFile(file); // Store the file for backend submission
-        localStorage.setItem("uploadedFile", JSON.stringify({ name: file.name, type: file.type, size: file.size })); // Store metadata for file
-        if (onChange) {
-          onChange(file); // Call onChange handler with the file
-        }
-      };
-      reader.readAsDataURL(file); // Convert the image to a Base64 string for preview
+  const MAX_FILE_SIZE_MB = 3; // Maximum allowed size in MB
+
+const onDrop = useCallback((acceptedFiles = []) => {
+  const file = acceptedFiles[0];
+  if (file) {
+    // Validate file size
+    const fileSizeInMB = file.size / (1024 * 1024); // Convert size to MB
+    if (fileSizeInMB > MAX_FILE_SIZE_MB) {
+       Swal.fire({
+          icon: 'error',
+          title: 'File Too Large',
+          text: `Please upload an image smaller than ${MAX_FILE_SIZE_MB}MB.`,
+        });
+      return; // Stop further processing
     }
-  }, [onChange]);
+
+    // Process file if size is valid
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Image = reader.result;
+      setPreview(base64Image); // Update the preview
+      setFile(file); // Store the file for backend submission
+      if (onChange) {
+        onChange(file); // Call onChange handler with the file
+      }
+    };
+    reader.readAsDataURL(file); // Convert the image to a Base64 string for preview
+  }
+}, [onChange]);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
@@ -83,7 +96,7 @@ export function ImageUpload({ onChange,file,setFile }) {
         <div className="aspect-[3/2] w-full flex flex-col items-center justify-center gap-2 p-4">
           <UploadCloud className="h-8 w-8 text-gray-400" />
           <p className="text-sm text-gray-400">
-            {isDragActive ? "Upload less than 3MB" : "Upload less than 3MB"}
+            {isDragActive ? "Drop Your Image" : "Upload less than 3MB"}
           </p>
         </div>
       )}

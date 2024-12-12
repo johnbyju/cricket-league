@@ -71,10 +71,6 @@ export default function PlayerDetails() {
   };
 
 
-  // const handleFileChange =(file)=>{
-  //   setPreview(newPreview);
-
-  // }
 
 
   const handleFileChange = (file) => {
@@ -123,6 +119,12 @@ export default function PlayerDetails() {
       setError(newErrors);
     }
   };
+
+  const handleButtonClick = () => {
+
+    navigate('/admin')
+  }
+  
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Fixed header image */}
@@ -134,9 +136,21 @@ export default function PlayerDetails() {
             className="object-cover  w-full h-full"
           />
         </div>
-        <div className="p-1 bg-black">
-          <h1 className="text-xl text-center font-semibold">Player Details</h1>
+        <div className="p-3 bg-black flex items-center justify-between relative">      
+          <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xl font-semibold">
+            Player Details
+          </h1>
+          <div className="ml-auto">
+            <button
+              type="button"
+              onClick={handleButtonClick}
+              className="flex justify-end text-end text-black"
+            >
+              Admin Access
+            </button>
+          </div>
         </div>
+
       </div>
 
       {/* Scrollable content */}
@@ -160,25 +174,6 @@ export default function PlayerDetails() {
               <User className="absolute right-3 top-8  text-gray-400 h-5 w-5" />
             </div>
 
-            {/* <div className="space-y-2">
-              <label htmlFor="dob" className="block text-sm font-medium">
-                Date of Birth
-              </label>
-              <div className="relative">
-                <input
-                  id="dob"
-                  type="text"
-                  required
-                  placeholder="dd/mm/yyyy"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  className="w-full p-2 bg-black border border-gray-800 text-white rounded"
-                />
-                {error?.dob &&<p className="text-red">{error?.dob}</p>}
-                <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
-            </div> */}
-
 
             <div className="relative space-y-2">
               <label htmlFor="dob" className="block text-sm font-medium">
@@ -189,7 +184,7 @@ export default function PlayerDetails() {
                 <DatePicker
                   id="dob"
                   className="bg-[#171717C4]"
-                  
+
                   value={formData.dob ? dayjs(formData.dob, 'DD/MM/YYYY') : null}
                   onChange={handleDateChange}
                   renderInput={(props) => <TextField {...props} fullWidth />}

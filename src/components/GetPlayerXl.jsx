@@ -18,7 +18,7 @@ function GetDataScheduler() {
     const scheduleNightlyTask = () => {
       const now = new Date();
       const targetTime = new Date();
-      targetTime.setHours(23, 0, 0, 0); // 11:00 PM
+      targetTime.setHours(23, 0, 0, 0); 
 
       const timeToWait = targetTime - now;
 
